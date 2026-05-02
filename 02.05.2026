@@ -1,0 +1,92 @@
+# Linux systemd and nginx lab
+
+## What I practiced
+
+- Checked Linux system information
+- Installed nginx
+- Managed nginx with systemctl
+- Checked service status
+- Read service logs with journalctl
+- Tested nginx with curl
+- Intentionally broke nginx configuration and fixed it
+
+## Commands
+
+```bash
+sudo apt update
+sudo apt install nginx -y
+systemctl status nginx
+curl localhost
+sudo systemctl stop nginx
+sudo systemctl start nginx
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+journalctl -u nginx --no-pager
+```
+
+## Nginx test page
+
+```bash
+echo "<h1> Artur Devops Lab</h1>" | sudo tee /var/www/html/index.html
+curl localhost
+```
+
+Result:
+
+```html
+<h1> Artur Devops Lab</h1>
+```
+
+## Troubleshooting nginx
+
+I intentionally broke nginx configuration by adding an invalid directive:
+
+```nginx
+wrong_directive on;
+```
+
+Then I tested the configuration:
+
+```bash
+sudo nginx -t
+```
+
+The error was:
+
+```text
+unknown directive "wrong_directive" in /etc/nginx/sites-enabled/default:47
+nginx: configuration file /etc/nginx/nginx.conf test failed
+```
+
+Then restart failed:
+
+```bash
+sudo systemctl restart nginx
+```
+
+I checked logs:
+
+```bash
+journalctl -u nginx -xe | tail -20
+```
+
+After removing the invalid directive, I tested again:
+
+```bash
+sudo nginx -t
+```
+
+Result:
+
+```text
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+## What I learned
+
+- `nginx -t` checks configuration before restarting the service.
+- `systemctl restart nginx` fails if nginx config has syntax errors.
+- `journalctl` helps debug failed services.
+- Error messages often show the exact file and line number.
+- A DevOps engineer should know how to break, diagnose and fix services.
