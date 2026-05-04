@@ -1,0 +1,6 @@
+*.log
+*.tmp
+.env
+secret.txt
+node_modules/
+__pycache__/
